@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MeriPedia - Mukt Vishwakosh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Linux+Libertine+Display&family=Georgia&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f9fa;
+      --white: #ffffff;
+      --border: #a2a9b1;
+      --border-light: #eaecf0;
+      --text: #202122;
+      --text-muted: #54595d;
+      --link: #3366cc;
+      --link-visited: #6b4ba1;
+      --link-hover: #447ff5;
+      --header-bg: #ffffff;
+      --sidebar-bg: #f8f9fa;
+      --infobox-bg: #f8f9fa;
+      --toc-bg: #f8f9fa;
+      --accent: #3366cc;
+      --red: #cc3333;
+    }
+
+    body {
+      font-family: 'Linux Libertine', Georgia, 'Times New Roman', serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    a { color: var(--link); text-decoration: none; }
+    a:visited { color: var(--link-visited); }
+    a:hover { text-decoration: underline; color: var(--link-hover); }
+
+    /* ── HEADER ── */
+    #header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    #logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    #logo-img {
+      width: 50px;
+      height: 50px;
+    }
+
+    #logo-text h1 {
+      font-family: 'Linux Libertine Display', Georgia, serif;
+      font-size: 22px;
+      font-weight: normal;
+      color: #000;
+      line-height: 1.1;
+    }
+
+    #logo-text p {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    #search-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      max-width: 400px;
+    }
+
+    #search-bar input {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      font-size: 13px;
+      font-family: inherit;
+      background: white;
+      outline: none;
+    }
+
+    #search-bar input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(51,102,204,0.15); }
+
+    #search-bar button {
+      padding: 6px 12px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    #nav-tabs {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .nav-tab {
+      padding: 6px 14px;
+      font-size: 12.5px;
+      color: var(--link);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      transition: border-color 0.15s;
+    }
+
+    .nav-tab:hover { border-bottom-color: var(--border); }
+    .nav-tab.active { border-bottom-color: var(--accent); color: var(--text); font-weight: 600; }
+
+    /* ── LAYOUT ── */
+    #layout {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+      gap: 20px;
+    }
+
+    #sidebar {
+      width: 200px;
+      flex-shrink: 0;
+    }
+
+    #content {
+      flex: 1;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      padding: 20px 28px;
+      min-width: 0;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar-box {
+      background: var(--sidebar-bg);
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+      font-size: 12.5px;
+    }
+
+    .sidebar-box h3 {
+      background: var(--accent);
+      color: white;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-box ul {
+      list-style: none;
+      padding: 6px 0;
+    }
+
+    .sidebar-box ul li a {
+      display: block;
+      padding: 3px 10px;
+      font-size: 12.5px;
+    }
+
+    .sidebar-box ul li a:hover { background: var(--border-light); }
+
+    /* ── ARTICLE TITLE ── */
+    #article-title {
+      font-family: 'Linux Libertine Display', Georgia, serif;
+      font-size: 28px;
+      font-weight: normal;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      margin-bottom: 14px;
+      color: #000;
+    }
+
+    #article-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 14px;
+    }
+
+    /* ── INFOBOX ── */
+    .infobox {
+      float: right;
+      clear: right;
+      margin: 0 0 16px 20px;
+      background: var(--infobox-bg);
+      border: 1px solid var(--border);
+      width: 220px;
+      font-size: 12.5px;
+    }
+
+    .infobox-title {
+      background: var(--accent);
+      color: white;
+      text-align: center;
+      padding: 6px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .infobox-img {
+      width: 100%;
+      height: 140px;
+      background: linear-gradient(135deg, #c9d5f5 0%, #e8edf8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+
+    .infobox table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .infobox td {
+      padding: 4px 8px;
+      border-top: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+
+    .infobox td:first-child {
+      font-weight: bold;
+      color: var(--text-muted);
+      width: 45%;
+      font-size: 11.5px;
+    }
+
+    /* ── TOC ── */
+    .toc {
+      background: var(--toc-bg);
+      border: 1px solid var(--border);
+      display: inline-block;
+      padding: 10px 16px;
+      margin: 14px 0;
+      min-width: 200px;
+      font-size: 13px;
+    }
+
+    .toc-title {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .toc ol {
+      padding-left: 20px;
+    }
+
+    .toc li { margin: 2px 0; }
+    .toc a { color: var(--link); }
+
+    /* ── ARTICLE BODY ── */
+    .article-section {
+      margin-top: 20px;
+    }
+
+    h2.section-title {
+      font-family: 'Linux Libertine Display', Georgia, serif;
+      font-size: 20px;
+      font-weight: normal;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 3px;
+      margin-bottom: 10px;
+      color: #000;
+    }
+
+    h3.subsection-title {
+      font-size: 15px;
+      font-weight: bold;
+      margin: 12px 0 6px;
+      color: #000;
+    }
+
+    p { margin-bottom: 10px; }
+
+    .hatnote {
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+      padding-left: 16px;
+      border-left: 3px solid var(--border-light);
+    }
+
+    .quote-box {
+      border-left: 4px solid var(--border);
+      margin: 12px 20px;
+      padding: 8px 14px;
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 13.5px;
+    }
+
+    /* ── REFERENCES ── */
+    .references {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .references ol { padding-left: 20px; }
+    .references li { margin: 3px 0; }
+
+    /* ── CATEGORIES ── */
+    #categories {
+      border-top: 1px solid var(--border);
+      padding: 10px 0 0;
+      margin-top: 24px;
+      font-size: 12.5px;
+    }
+
+    #categories strong { margin-right: 8px; }
+
+    #categories a {
+      margin-right: 10px;
+      font-size: 12px;
+    }
+
+    /* ── FOOTER ── */
+    #footer {
+      background: var(--sidebar-bg);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 20px;
+    }
+
+    #footer a { color: var(--link); margin: 0 6px; }
+
+    /* ── NOTICE BOX ── */
+    .notice-box {
+      background: #eaf3fb;
+      border: 1px solid #a2c0db;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .notice-box .icon { font-size: 20px; flex-shrink: 0; }
+
+    /* ── EDIT BTN ── */
+    .edit-btn {
+      font-size: 11px;
+      color: var(--link);
+      margin-left: 10px;
+      font-family: sans-serif;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      #layout { flex-direction: column; padding: 10px; }
+      #sidebar { width: 100%; }
+      .infobox { float: none; width: 100%; margin: 0 0 14px 0; }
+      #header { flex-direction: column; align-items: flex-start; }
+      #search-bar { max-width: 100%; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <a id="logo" href="#">
+    <svg id="logo-img" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="25" cy="25" r="23" fill="none" stroke="#3366cc" stroke-width="2"/>
+      <circle cx="25" cy="25" r="16" fill="none" stroke="#3366cc" stroke-width="1.5"/>
+      <circle cx="25" cy="25" r="9" fill="none" stroke="#3366cc" stroke-width="1"/>
+      <line x1="2" y1="25" x2="48" y2="25" stroke="#3366cc" stroke-width="1.5"/>
+      <line x1="25" y1="2" x2="25" y2="48" stroke="#3366cc" stroke-width="1.5"/>
+    </svg>
+    <div id="logo-text">
+      <h1>MeriPedia</h1>
+      <p>Mukt Vishwakosh — Sabke liye</p>
+    </div>
+  </a>
+
+  <div id="search-bar">
+    <input type="text" id="searchInput" placeholder="MeriPedia mein khojein..." />
+    <button onclick="alert('Search feature — aap apna content yahan add kar sakte hain!')">🔍</button>
+  </div>
+
+  <div style="font-size:12px; color: var(--text-muted);">
+    <a href="#" style="margin-right:10px;">Login</a>
+    <a href="#">Account Banayein</a>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div id="nav-tabs">
+  <div class="nav-tab active">Lekh</div>
+  <div class="nav-tab">Charcha</div>
+  <div class="nav-tab">Strot dekhein</div>
+  <div class="nav-tab">Itihaas</div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-box">
+      <h3>📚 Vishay</h3>
+      <ul>
+        <li><a href="#">Vigyan</a></li>
+        <li><a href="#">Itihaas</a></li>
+        <li><a href="#">Bhugol</a></li>
+        <li><a href="#">Kala</a></li>
+        <li><a href="#">Takneek</a></li>
+        <li><a href="#">Samaj</a></li>
+        <li><a href="#">Khelkud</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-box">
+      <h3>🔗 Bahari Links</h3>
+      <ul>
+        <li><a href="https://github.com" target="_blank">GitHub</a></li>
+        <li><a href="https://wikipedia.org" target="_blank">Wikipedia</a></li>
+        <li><a href="https://claude.ai" target="_blank">Claude AI</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-box">
+      <h3>📅 Aaj ka Lekh</h3>
+      <ul>
+        <li><a href="#">Internet ka Itihaas</a></li>
+        <li><a href="#">Artificial Intelligence</a></li>
+        <li><a href="#">Bharat ka Sanvidhan</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ARTICLE CONTENT -->
+  <div id="content">
+
+    <div class="notice-box">
+      <span class="icon">✏️</span>
+      <span>Yeh ek <strong>sample lekh</strong> hai. Aap is page ka content apni zaroorat ke hisaab se badal sakte hain. HTML file mein jo bhi text hai, use edit karein!</span>
+    </div>
+
+    <h1 id="article-title">
+      Antarjaal (Internet)
+      <span class="edit-btn">[Sampaadit karein]</span>
+    </h1>
+
+    <p id="article-subtitle">Vishwa ka sabse bada sanchar tantra</p>
+
+    <!-- INFOBOX -->
+    <div class="infobox">
+      <div class="infobox-title">Sankhipt Jaankari</div>
+      <div class="infobox-img">🌐</div>
+      <table>
+        <tr><td>Sthapana</td><td>1983</td></tr>
+        <tr><td>Prakar</td><td>Vaishvik Neta</td></tr>
+        <tr><td>Upayogkarta</td><td>5+ Billion</td></tr>
+        <tr><td>Protocol</td><td>TCP/IP</td></tr>
+        <tr><td>Nirmata</td><td>ARPANET</td></tr>
+      </table>
+    </div>
+
+    <p>
+      <b>Antarjaal</b> ya <b>Internet</b> ek vaishvik sanchar tantra hai jo lakho computer networks ko aapas mein jodata hai.
+      Yeh <a href="#">TCP/IP protocol</a> ka upayog karke data ko ek jagah se doosri jagah bhejta hai.
+      Aaj ke samay mein poori duniya mein 5 billion se adhik log internet ka upayog karte hain.
+    </p>
+
+    <p>
+      Internet ne logon ke jeevan ko bahut prabhavit kiya hai — <a href="#">shiksha</a>, <a href="#">vyaapar</a>,
+      <a href="#">manoranjan</a> aur <a href="#">sanchar</a> — sabhi kshetron mein krantikari parivartan aaya hai.
+    </p>
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc">
+      <div class="toc-title">📋 Vishay-suchi</div>
+      <ol>
+        <li><a href="#itihaas">Itihaas</a></li>
+        <li><a href="#kaise-kaam-karta">Kaise kaam karta hai</a></li>
+        <li><a href="#upayog">Upayog</a></li>
+        <li><a href="#bharat">Bharat mein Internet</a></li>
+        <li><a href="#sandarbh">Sandarbh</a></li>
+      </ol>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="article-section" id="itihaas">
+      <h2 class="section-title">1. Itihaas <span class="edit-btn">[Sampaadit karein]</span></h2>
+      <div class="hatnote">Mukhya lekh: <a href="#">ARPANET ka Itihaas</a></div>
+      <p>
+        Internet ki neev 1960 ke dashak mein <a href="#">ARPANET</a> project ke roop mein rakhi gayi thi.
+        Yeh project <b>United States Department of Defense</b> ne shuru kiya tha.
+        Pehle sirf kuch universities aur sarkari sansthayein isse use karti theen.
+      </p>
+      <p>
+        1991 mein <a href="#">Tim Berners-Lee</a> ne <b>World Wide Web (WWW)</b> ka aavishkar kiya,
+        jisne internet ko aam logon ke liye uplabdh karaya. Iske baad internet ne tezi se
+        poori duniya mein apni pahnuch banayi.
+      </p>
+      <div class="quote-box">
+        "The Web is more a social creation than a technical one."<br/>
+        — Tim Berners-Lee
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="article-section" id="kaise-kaam-karta">
+      <h2 class="section-title">2. Kaise Kaam Karta Hai <span class="edit-btn">[Sampaadit karein]</span></h2>
+      <p>
+        Internet lakhon computers aur devices ko ek doosre se <a href="#">optical fiber cables</a>,
+        <a href="#">wireless signals</a> aur <a href="#">satellites</a> ke zariye jodata hai.
+      </p>
+      <h3 class="subsection-title">2.1 TCP/IP Protocol</h3>
+      <p>
+        Data ko chote-chote packets mein divide karke bheja jaata hai.
+        Har packet apna rasta khud dhundhta hai aur destination par pahunchne ke baad
+        phir se jod diya jaata hai.
+      </p>
+      <h3 class="subsection-title">2.2 Domain Name System (DNS)</h3>
+      <p>
+        DNS ek phone book ki tarah kaam karta hai. Jab aap <code>google.com</code> likhte hain,
+        DNS usse ek IP address mein badal deta hai jaise <code>142.250.182.46</code>.
+      </p>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="article-section" id="upayog">
+      <h2 class="section-title">3. Upayog <span class="edit-btn">[Sampaadit karein]</span></h2>
+      <p>Internet ke pramukh upayog:</p>
+      <ul style="padding-left:24px; margin-bottom:10px;">
+        <li><b>Sanchar</b> — Email, WhatsApp, Video Call</li>
+        <li><b>Shiksha</b> — Online courses, YouTube, Wikipedia</li>
+        <li><b>Vyaapar</b> — E-commerce, Banking, Digital payments</li>
+        <li><b>Manoranjan</b> — OTT platforms, Online games, Social media</li>
+        <li><b>Sarkar</b> — Digital India, e-governance, online forms</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="article-section" id="bharat">
+      <h2 class="section-title">4. Bharat mein Internet <span class="edit-btn">[Sampaadit karein]</span></h2>
+      <p>
+        Bharat mein internet ki shuruat <b>15 August 1995</b> ko <a href="#">VSNL</a> dwara ki gayi thi.
+        2016 mein <b>Jio</b> ke aane ke baad internet ki rasai aam logon tak pahunchi aur data ki kimatein
+        bahut kam ho gayin.
+      </p>
+      <p>
+        Aaj Bharat duniya mein <b>sabse saste internet data</b> wale deshon mein se ek hai.
+        Bharat mein lagbhag <b>75 crore</b> internet upayogkarta hain.
+      </p>
+    </div>
+
+    <!-- REFERENCES -->
+    <div class="article-section references" id="sandarbh">
+      <h2 class="section-title" style="font-size:17px;">5. Sandarbh</h2>
+      <ol>
+        <li>Leiner et al. (2009). <i>A Brief History of the Internet.</i> ACM SIGCOMM.</li>
+        <li>Berners-Lee, T. (1999). <i>Weaving the Web.</i> HarperCollins.</li>
+        <li>TRAI Report (2023). <i>Telecom Subscription Data.</i> India.</li>
+      </ol>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div id="categories">
+      <strong>Shreniyaan:</strong>
+      <a href="#">Takneek</a>
+      <a href="#">Sanchar</a>
+      <a href="#">Vigyan</a>
+      <a href="#">Digital India</a>
+      <a href="#">Computer Vigyan</a>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /layout -->
+
+<!-- FOOTER -->
+<div id="footer">
+  <p>
+    <a href="#">MeriPedia ke baare mein</a> |
+    <a href="#">Niyam aur Shartein</a> |
+    <a href="#">Gupata Niti</a> |
+    <a href="#">Humse Sampark karein</a>
+  </p>
+  <p style="margin-top:6px;">
+    © 2024 MeriPedia — Yeh website Claude AI ki madad se banayi gayi hai aur GitHub Pages par host hai.
+  </p>
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Search enter key
+  document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      alert('Search: "' + this.value + '"\n\nAap apna content yahan add kar sakte hain!');
+    }
+  });
+</script>
+
+</body>
+</html>
